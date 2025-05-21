@@ -1,0 +1,10 @@
+
+version: '3.8'
+services:
+  node-api:
+    build: .
+    container_name: node-api-prod
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production

@@ -6,14 +6,19 @@
     "url": "git://github.com/scotch-io/node-token-authentication"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+      "test": "mocha"
   },
   "author": "Chris Sevilleja <scotch.io>",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "~1.18.2",
     "express": "~4.16.1",
-    "morgan": "~1.9.0",
-    "mongoose" : "~4.11.14",
-    "body-parser": "~1.18.2"
+    "mongoose": "~4.11.14",
+    "morgan": "~1.9.0"
+  },
+  "devDependencies": {
+    "chai": "^5.2.0",
+    "mocha": "^11.4.0"
   }
 }

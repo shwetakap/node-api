@@ -18,17 +18,17 @@ var port     = process.env.PORT || 8080; // set our port
 
 // DATABASE SETUP
 var mongoose   = require('mongoose');
-mongoose.connect('mongodb://node:node@novus.modulusmongo.net:27017/Iganiq8o'); // connect to our database
+mongoose.connect('mongodb://localhost:27017/your-db-name', options);
 
 // Handle the connection event
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
-db.once('open', function() {
+//db.once('open', function() {
   console.log("DB connection alive");
 });
 
-// Bear models lives here
+Bear models lives here
 var Bear     = require('./app/models/bear');
 
 // ROUTES FOR OUR API
@@ -128,5 +128,12 @@ app.use('/api', router);
 
 // START THE SERVER
 // =============================================================================
-app.listen(port);
-console.log('Magic happens on port ' + port);
+// START THE SERVER
+// =============================================================================
+// Only start listening if this file is run directly (not required by tests)
+if (require.main === module) {
+  app.listen(port);
+  console.log('Magic happens on port ' + port);
+}
+
+module.exports = app;  // Export app for testing

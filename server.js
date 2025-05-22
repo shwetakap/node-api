@@ -125,7 +125,10 @@ router.route('/bears/:bear_id')
 
 // REGISTER OUR ROUTES -------------------------------
 app.use('/api', router);
-
+// Health check endpoint for monitoring
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
 // START THE SERVER
 // =============================================================================
 // START THE SERVER

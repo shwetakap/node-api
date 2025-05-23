@@ -1,142 +1,123 @@
 // BASE SETUP
-// =============================================================================
+const express = require('express');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const mongoose = require('mongoose');
 
-// call the packages we need
-var express    = require('express');
-var bodyParser = require('body-parser');
-var app        = express();
-var morgan     = require('morgan');
+const app = express();
+const port = process.env.PORT || 5000;
 
-// configure app
-app.use(morgan('dev')); // log requests to the console
-
-// configure body parser
+// MIDDLEWARE
+app.use(morgan('dev')); // Log requests
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var port     = process.env.PORT || 8080; // set our port
-
 // DATABASE SETUP
-var mongoose   = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/your-db-name', options);
+mongoose.connect('mongodb://localhost:27017/node-js');
 
-// Handle the connection event
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+const db = mongoose.connection;
+db.on('error', (err) => console.error('MongoDB connection error:', err));
+db.once('open', () => console.log('MongoDB connected!'));
 
-//db.once('open', function() {
-  console.log("DB connection alive");
+// BEAR MODEL
+const Schema = mongoose.Schema;
+
+const BearSchema = new Schema({
+  name: { type: String, required: true }
 });
 
-Bear models lives here
-var Bear     = require('./app/models/bear');
+const Bear = mongoose.model('Bear', BearSchema);
 
-// ROUTES FOR OUR API
-// =============================================================================
+// ROUTES FOR API
+const router = express.Router();
 
-// create our router
-var router = express.Router();
-
-// middleware to use for all requests
-router.use(function(req, res, next) {
-	// do logging
-	console.log('Something is happening.');
-	next();
+// Middleware for logging
+router.use((req, res, next) => {
+  console.log('Something is happening.');
+  next();
 });
 
-// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
-router.get('/', function(req, res) {
-	res.json({ message: 'hooray! welcome to our api!' });	
+// Base test route
+router.get('/', (req, res) => {
+  res.json({ message: 'hooray! welcome to our api!' });
 });
 
-// on routes that end in /bears
-// ----------------------------------------------------
+// /api/bears route
 router.route('/bears')
+  // Create a new bear
+  .post(async (req, res) => {
+    try {
+      const bear = new Bear({ name: req.body.name });
+      await bear.save();
+      res.status(201).json({ message: 'Bear created!' });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  })
 
-	// create a bear (accessed at POST http://localhost:8080/bears)
-	.post(function(req, res) {
-		
-		var bear = new Bear();		// create a new instance of the Bear model
-		bear.name = req.body.name;  // set the bears name (comes from the request)
+  // Get all bears
+  .get(async (req, res) => {
+    try {
+      const bears = await Bear.find();
+      res.json(bears);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 
-		bear.save(function(err) {
-			if (err)
-				res.send(err);
-
-			res.json({ message: 'Bear created!' });
-		});
-
-		
-	})
-
-	// get all the bears (accessed at GET http://localhost:8080/api/bears)
-	.get(function(req, res) {
-		Bear.find(function(err, bears) {
-			if (err)
-				res.send(err);
-
-			res.json(bears);
-		});
-	});
-
-// on routes that end in /bears/:bear_id
-// ----------------------------------------------------
+// /api/bears/:bear_id route
 router.route('/bears/:bear_id')
+  // Get a specific bear
+  .get(async (req, res) => {
+    try {
+      const bear = await Bear.findById(req.params.bear_id);
+      if (!bear) return res.status(404).json({ message: 'Bear not found' });
+      res.json(bear);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  })
 
-	// get the bear with that id
-	.get(function(req, res) {
-		Bear.findById(req.params.bear_id, function(err, bear) {
-			if (err)
-				res.send(err);
-			res.json(bear);
-		});
-	})
+  // Update a specific bear
+  .put(async (req, res) => {
+    try {
+      const bear = await Bear.findById(req.params.bear_id);
+      if (!bear) return res.status(404).json({ message: 'Bear not found' });
 
-	// update the bear with this id
-	.put(function(req, res) {
-		Bear.findById(req.params.bear_id, function(err, bear) {
+      bear.name = req.body.name || bear.name;
+      await bear.save();
 
-			if (err)
-				res.send(err);
+      res.json({ message: 'Bear updated!' });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  })
 
-			bear.name = req.body.name;
-			bear.save(function(err) {
-				if (err)
-					res.send(err);
+  // Delete a specific bear
+  .delete(async (req, res) => {
+    try {
+      const result = await Bear.deleteOne({ _id: req.params.bear_id });
+      if (result.deletedCount === 0) return res.status(404).json({ message: 'Bear not found' });
 
-				res.json({ message: 'Bear updated!' });
-			});
+      res.json({ message: 'Successfully deleted' });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 
-		});
-	})
-
-	// delete the bear with this id
-	.delete(function(req, res) {
-		Bear.remove({
-			_id: req.params.bear_id
-		}, function(err, bear) {
-			if (err)
-				res.send(err);
-
-			res.json({ message: 'Successfully deleted' });
-		});
-	});
-
-
-// REGISTER OUR ROUTES -------------------------------
+// REGISTER ROUTES
 app.use('/api', router);
-// Health check endpoint for monitoring
+
+// Health check
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
-// START THE SERVER
-// =============================================================================
-// START THE SERVER
-// =============================================================================
-// Only start listening if this file is run directly (not required by tests)
+
+// START SERVER
 if (require.main === module) {
-  app.listen(port);
-  console.log('Magic happens on port ' + port);
+  app.listen(port, () => {
+    console.log(`🚀 Magic happens on port ${port}`);
+  });
 }
 
-module.exports = app;  // Export app for testing
+module.exports = app;

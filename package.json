@@ -7,9 +7,10 @@
   },
   "scripts": {
     "start": "node server.js",
-      "test": "mocha test/**/*.test.js --exit",
-  "test:unit": "mocha test/unit/**/*.test.js",
-  "test:integration": "mocha test/integration/**/*.test.js" },
+    "test": "mocha test/**/*.test.js --exit",
+    "test:unit": "mocha test/unit/**/*.test.js",
+    "test:integration": "mocha test/integration/**/*.test.js"
+  },
   "author": "SK <scotch.io>",
   "license": "MIT",
   "dependencies": {

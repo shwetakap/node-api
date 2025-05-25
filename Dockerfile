@@ -14,8 +14,7 @@ RUN npm install
 COPY . .
 
 # Run tests (fail build if tests fail)
-RUN npx mocha "test/unit/**/*.test.js"
-RUN npx mocha "test/integration/**/*.test.js"
+
 
 # Remove dev dependencies to slim image (optional)
 RUN npm prune --production

@@ -1,21 +1,24 @@
-
 # Use official Node.js LTS version as base image
 FROM node:18-alpine
 
-# Set working directory inside the container
+# Set working directory
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json first (for better caching)
+# Set environment to development so devDependencies are installed
+ARG NODE_ENV=development
+ENV NODE_ENV=$NODE_ENV
+
+# Copy package files first (for better layer caching)
 COPY package*.json ./
 
-# Install dependencies
+# Install all dependencies including devDependencies
 RUN npm install
 
-# Copy all other source code to working directory
+# Copy the rest of the application code
 COPY . .
 
-# Expose port 8080 (the port your app listens on)
+# Expose app port
 EXPOSE 8080
 
-# Command to run your app
+# Run app
 CMD ["node", "server.js"]

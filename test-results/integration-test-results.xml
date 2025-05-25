@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Mocha Tests" time="0.231" tests="1" failures="0">
-  <testsuite name="Root Suite" timestamp="2025-05-25T10:52:45" tests="0" time="0.000" failures="0">
+<testsuites name="Mocha Tests" time="0.236" tests="1" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-05-25T13:23:18" tests="0" time="0.000" failures="0">
   </testsuite>
-  <testsuite name="Bear API Integration Tests" timestamp="2025-05-25T10:52:45" tests="1" file="C:\Users\shwet\OneDrive\Documents\GitHub\node-api\test\integration\bearRoutes.test.js" time="0.228" failures="0">
-    <testcase name="Bear API Integration Tests GET /api/bears should get all bears" time="0.191" classname="GET /api/bears should get all bears">
+  <testsuite name="Bear API Integration Tests" timestamp="2025-05-25T13:23:18" tests="1" file="C:\Users\shwet\OneDrive\Documents\GitHub\node-api\test\integration\bearRoutes.test.js" time="0.227" failures="0">
+    <testcase name="Bear API Integration Tests GET /api/bears should get all bears" time="0.165" classname="GET /api/bears should get all bears">
     </testcase>
   </testsuite>
 </testsuites>

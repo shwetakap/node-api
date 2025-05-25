@@ -7,10 +7,12 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3005:5000"
+      - "3005:5001"
     environment:
       - NODE_ENV=production
       - NEW_RELIC_LICENSE_KEY=$18bd6ed5-f760-4e8e-94bc-68e5c0f87786$
+      - MONGO_URI=mongodb://mongo:27017/node-js
+
     depends_on:
       - mongo
     networks:

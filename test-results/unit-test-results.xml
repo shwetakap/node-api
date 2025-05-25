@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Mocha Tests" time="0.175" tests="2" failures="0">
-  <testsuite name="Root Suite" timestamp="2025-05-25T11:03:17" tests="0" time="0.000" failures="0">
+<testsuites name="Mocha Tests" time="0.257" tests="2" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-05-25T13:21:09" tests="0" time="0.000" failures="0">
   </testsuite>
-  <testsuite name="Bear Model Unit Tests" timestamp="2025-05-25T11:03:17" tests="2" file="C:\Users\shwet\OneDrive\Documents\GitHub\node-api\test\unit\bearModel.test.js" time="0.172" failures="0">
-    <testcase name="Bear Model Unit Tests should be invalid if name is empty" time="0.006" classname="should be invalid if name is empty">
+  <testsuite name="Bear Model Unit Tests" timestamp="2025-05-25T13:21:09" tests="2" file="C:\Users\shwet\OneDrive\Documents\GitHub\node-api\test\unit\bearModel.test.js" time="0.254" failures="0">
+    <testcase name="Bear Model Unit Tests should be invalid if name is empty" time="0.020" classname="should be invalid if name is empty">
     </testcase>
-    <testcase name="Bear Model Unit Tests should save a bear with valid name" time="0.095" classname="should save a bear with valid name">
+    <testcase name="Bear Model Unit Tests should save a bear with valid name" time="0.153" classname="should save a bear with valid name">
     </testcase>
   </testsuite>
 </testsuites>

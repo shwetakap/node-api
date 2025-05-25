@@ -1,4 +1,4 @@
-// BASE SETUP
+// server.js
 require('newrelic');
 
 const express = require('express');
@@ -7,30 +7,30 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 
 const app = express();
-const connectDB = async (uri) => {
+const port = process.env.PORT || 5001;
+
+// Use MONGO_URI env var or fallback to localhost
+const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/node-js';
+
+// Connect to MongoDB
+const connectDB = async () => {
   try {
-    await mongoose.connect(uri);
+    await mongoose.connect(mongoURI);
     console.log('MongoDB connected!');
   } catch (err) {
     console.error('MongoDB connection error:', err);
-    throw err;
+    process.exit(1);  // Exit process if DB connection fails
   }
 };
-const port = process.env.PORT || 5000;
 
-// MIDDLEWARE
-app.use(morgan('dev')); // Log requests
+connectDB();
+
+// Middleware
+app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// DATABASE SETUP
-mongoose.connect('mongodb://localhost:27017/node-js');
-
-const db = mongoose.connection;
-db.on('error', (err) => console.error('MongoDB connection error:', err));
-db.once('open', () => console.log('MongoDB connected!'));
-
-// BEAR MODEL
+// Bear schema and model
 const Schema = mongoose.Schema;
 
 const BearSchema = new Schema({
@@ -39,10 +39,10 @@ const BearSchema = new Schema({
 
 const Bear = mongoose.models.Bear || mongoose.model('Bear', BearSchema);
 
-// ROUTES FOR API
+// Router setup
 const router = express.Router();
 
-// Middleware for logging
+// Logging middleware for router
 router.use((req, res, next) => {
   console.log('Something is happening.');
   next();
@@ -53,9 +53,8 @@ router.get('/', (req, res) => {
   res.json({ message: 'hooray! welcome to our api!' });
 });
 
-// /api/bears route
+// /api/bears routes
 router.route('/bears')
-  // Create a new bear
   .post(async (req, res) => {
     try {
       const bear = new Bear({ name: req.body.name });
@@ -65,8 +64,6 @@ router.route('/bears')
       res.status(500).json({ error: err.message });
     }
   })
-
-  // Get all bears
   .get(async (req, res) => {
     try {
       const bears = await Bear.find();
@@ -76,9 +73,8 @@ router.route('/bears')
     }
   });
 
-// /api/bears/:bear_id route
+// /api/bears/:bear_id routes
 router.route('/bears/:bear_id')
-  // Get a specific bear
   .get(async (req, res) => {
     try {
       const bear = await Bear.findById(req.params.bear_id);
@@ -88,8 +84,6 @@ router.route('/bears/:bear_id')
       res.status(500).json({ error: err.message });
     }
   })
-
-  // Update a specific bear
   .put(async (req, res) => {
     try {
       const bear = await Bear.findById(req.params.bear_id);
@@ -103,8 +97,6 @@ router.route('/bears/:bear_id')
       res.status(500).json({ error: err.message });
     }
   })
-
-  // Delete a specific bear
   .delete(async (req, res) => {
     try {
       const result = await Bear.deleteOne({ _id: req.params.bear_id });
@@ -116,23 +108,16 @@ router.route('/bears/:bear_id')
     }
   });
 
-// REGISTER ROUTES
+// Register router
 app.use('/api', router);
 
-// Health check
+// Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
 
-// START SERVER
-if (require.main === module) {
-  app.listen(port, () => {
-    console.log(`🚀 Magic happens on port ${port}`);
-  });
-}
-// Simple /metrics endpoint for monitoring
+// Simple /metrics endpoint
 app.get('/metrics', (req, res) => {
-  // Example: Return some basic app metrics as plain text
   const metrics = `
 # HELP http_requests_total The total number of HTTP requests
 # TYPE http_requests_total counter
@@ -141,4 +126,12 @@ http_requests_total{method="GET",endpoint="/metrics"} 1
   res.set('Content-Type', 'text/plain');
   res.send(metrics);
 });
-module.exports = { app, connectDB  };
+
+// Start server
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`🚀 Server running on port ${port}`);
+  });
+}
+
+module.exports = { app, connectDB };

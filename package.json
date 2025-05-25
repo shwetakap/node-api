@@ -7,10 +7,9 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "npx mocha \"test/unit/**/*.test.js\" \"test/integration/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=test-results/test-results.xml --timeout 10000",
-    "test:unit": "npx mocha \"test/unit/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=test-results/unit-test-results.xml --timeout 10000",
-    "test:integration": "npx mocha \"test/integration/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=test-results/integration-test-results.xml --timeout 10000"
-  },
+      "test": "mocha test/**/*.test.js --exit",
+  "test:unit": "mocha test/unit/**/*.test.js",
+  "test:integration": "mocha test/integration/**/*.test.js" },
   "author": "SK <scotch.io>",
   "license": "MIT",
   "dependencies": {
@@ -25,6 +24,7 @@
     "chai-http": "^5.1.2",
     "mocha": "^11.5.0",
     "mocha-junit-reporter": "^2.2.1",
+    "mocha-multi-reporters": "^1.5.1",
     "supertest": "^7.1.1"
   },
   "version": "1.0.0",

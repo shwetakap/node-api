@@ -10,12 +10,12 @@ const app = express();
 const port = process.env.PORT || 5001;
 
 // Use MONGO_URI env var or fallback to localhost
-const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/node-js';
+const mongoURI = process.env.MONGO_URL || 'mongodb://localhost:27017/node-js';
 
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-    await mongoose.connect(mongoURI);
+    await mongoose.connect((mongoURI));
     console.log('MongoDB connected!');
   } catch (err) {
     console.error('MongoDB connection error:', err);

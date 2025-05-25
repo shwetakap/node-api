@@ -3,7 +3,7 @@ const request = require('supertest');
 const { app } = require('../../server');
 const Bear = require('../../app/models/bear'); // path to your Bear model
 
-const TEST_DB_URI = 'mongodb://localhost:27017/test-db';
+const TEST_DB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/test-db';
 
 before(async () => {
   if (mongoose.connection.readyState === 0) {

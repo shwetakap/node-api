@@ -12,7 +12,7 @@ describe('Bear Model Unit Tests', function () {
 
   before(async () => {
     await mongoose.disconnect();
-await mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/test-db');
+     await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/test-db');
 
   });
 

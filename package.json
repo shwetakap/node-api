@@ -1,28 +1,16 @@
 {
   "name": "api",
-  "version": "1.0.0",
-  "description": "Using the new Express 4.0 Router to build an API",
   "main": "server.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/scotch-io/node-token-authentication.git"
   },
-  "author": "Chris Sevilleja <scotch.io>",
-  "license": "MIT",
-  "keywords": [],
-  "bugs": {
-    "url": "https://github.com/scotch-io/node-token-authentication/issues"
-  },
-  "homepage": "https://github.com/scotch-io/node-token-authentication#readme",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "start": "node server.js",
-    "test": "mocha",
-    "test:ci": "mocha --reporter mocha-junit-reporter --reporter-options mochaFile=test-results.xml",
-    "snyk:scan": "snyk test"
+    "test": "mocha"
   },
+  "author": "Chris Sevilleja <scotch.io>",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "~1.18.2",
     "express": "~4.16.1",
@@ -31,10 +19,20 @@
     "newrelic": "^12.19.0"
   },
   "devDependencies": {
-    "chai": "^5.2.0",
+    "chai": "^4.3.7",
     "chai-http": "^5.1.2",
     "mocha": "^11.5.0",
     "mocha-junit-reporter": "^2.2.1",
     "supertest": "^7.1.1"
-  }
+  },
+  "version": "1.0.0",
+  "description": "Using the new Express 4.0 Router to build an API",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/scotch-io/node-token-authentication/issues"
+  },
+  "homepage": "https://github.com/scotch-io/node-token-authentication#readme"
 }

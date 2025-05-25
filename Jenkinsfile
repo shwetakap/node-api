@@ -6,10 +6,11 @@ pipeline {
         SONAR_PROJECT_KEY = 'shwetakap_node-api'
         SONAR_HOST_URL = 'https://sonarcloud.io'
         SONAR_ORGANIZATION = 'shwetakap'
+        NODE_ENV = 'production'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Source Code (Git)') {
             steps {
                 git branch: 'main', url: 'https://github.com/shwetakap/node-api.git'
             }
@@ -23,13 +24,23 @@ pipeline {
             }
         }
 
-        stage('Test by Mocha') {
+        stage('Run Unit Tests (Mocha + Chai)') {
             steps {
                 script {
-                    bat 'npm install'
-                    bat 'npx mocha --reporter mocha-junit-reporter --reporter-options mochaFile=test-results.xml'
+                    echo '🔍 Running Unit Tests'
+                    bat "docker run --rm ${IMAGE_NAME} npx mocha \"test/unit/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=test-results/unit-test-results.xml"
                 }
-                junit 'test-results.xml'
+                junit 'test-results/unit-test-results.xml'
+            }
+        }
+
+        stage('Run Integration Tests') {
+            steps {
+                script {
+                    echo '🔗 Running Integration Tests'
+                    bat "docker run --rm ${IMAGE_NAME} npx mocha \"test/integration/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=test-results/integration-test-results.xml"
+                }
+                junit 'test-results/integration-test-results.xml'
             }
         }
 
@@ -47,7 +58,6 @@ pipeline {
                             -Dsonar.host.url=${SONAR_HOST_URL} ^
                             -Dsonar.login=%SONAR_TOKEN%
                         """
-                        echo "🔗 SonarCloud Dashboard: https://sonarcloud.io/dashboard?id=${SONAR_PROJECT_KEY}"
                     }
                 }
             }
@@ -69,21 +79,31 @@ pipeline {
             }
         }
 
-        stage('Deploy to Staging') {
+        stage('Deploy to Staging (New Relic Test)') {
             steps {
-                script {
-                    echo '🔧 Deploying to staging...'
-                    bat 'docker-compose -f docker-compose.staging.yml up -d --build'
+                withCredentials([string(credentialsId: 'NEW_RELIC_LICENSE_KEY', variable: 'NEW_RELIC_LICENSE_KEY')]) {
+                    script {
+                        echo '🔧 Deploying to staging with New Relic...'
+                        bat """
+                            set NEW_RELIC_LICENSE_KEY=%NEW_RELIC_LICENSE_KEY%
+                            docker-compose -f docker-compose.staging.yml up -d --build
+                        """
+                    }
                 }
             }
         }
 
-        stage('Release to Production using DockerCompose') {
+        stage('Release to Production using DockerCompose+NewRelic Monitoring') {
             steps {
                 input message: 'Promote to production?'
-                script {
-                    echo '🚀 Deploying to production...'
-                    bat 'docker-compose -f docker-compose.prod.yml up -d --build'
+                withCredentials([string(credentialsId: 'NEW_RELIC_LICENSE_KEY', variable: 'NEW_RELIC_LICENSE_KEY')]) {
+                    script {
+                        echo '🚀 Deploying to production with New Relic...'
+                        bat """
+                            set NEW_RELIC_LICENSE_KEY=%NEW_RELIC_LICENSE_KEY%
+                            docker-compose -f docker-compose.prod.yml up -d --build
+                        """
+                    }
                 }
             }
         }

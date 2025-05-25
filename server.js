@@ -7,6 +7,15 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 
 const app = express();
+const connectDB = async (uri) => {
+  try {
+    await mongoose.connect(uri);
+    console.log('MongoDB connected!');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    throw err;
+  }
+};
 const port = process.env.PORT || 5000;
 
 // MIDDLEWARE
@@ -28,7 +37,7 @@ const BearSchema = new Schema({
   name: { type: String, required: true }
 });
 
-const Bear = mongoose.model('Bear', BearSchema);
+const Bear = mongoose.models.Bear || mongoose.model('Bear', BearSchema);
 
 // ROUTES FOR API
 const router = express.Router();
@@ -121,5 +130,15 @@ if (require.main === module) {
     console.log(`🚀 Magic happens on port ${port}`);
   });
 }
-
-module.exports = app;
+// Simple /metrics endpoint for monitoring
+app.get('/metrics', (req, res) => {
+  // Example: Return some basic app metrics as plain text
+  const metrics = `
+# HELP http_requests_total The total number of HTTP requests
+# TYPE http_requests_total counter
+http_requests_total{method="GET",endpoint="/metrics"} 1
+  `;
+  res.set('Content-Type', 'text/plain');
+  res.send(metrics);
+});
+module.exports = { app, connectDB  };

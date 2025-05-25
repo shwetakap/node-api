@@ -7,7 +7,9 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "mocha"
+    "test": "npx mocha \"test/unit/**/*.test.js\" \"test/integration/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=test-results/test-results.xml --timeout 10000",
+    "test:unit": "npx mocha \"test/unit/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=test-results/unit-test-results.xml --timeout 10000",
+    "test:integration": "npx mocha \"test/integration/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=test-results/integration-test-results.xml --timeout 10000"
   },
   "author": "Chris Sevilleja <scotch.io>",
   "license": "MIT",

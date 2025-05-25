@@ -7,14 +7,19 @@ const BearSchema = new mongoose.Schema({
 
 const Bear = mongoose.models.Bear || mongoose.model('Bear', BearSchema);
 
-describe('Bear Model Unit Tests', () => {
+describe('Bear Model Unit Tests', function () {
+  this.timeout(10000);  // Increase timeout for all tests and hooks
+
   before(async () => {
     await mongoose.disconnect();
-    await mongoose.connect('mongodb://localhost:27017/test-db');
+await mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/test-db');
+
   });
 
   after(async () => {
-    await mongoose.connection.db.dropDatabase();
+    if (mongoose.connection.readyState === 1 && mongoose.connection.db) {
+      await mongoose.connection.db.dropDatabase();
+    }
     await mongoose.disconnect();
   });
 

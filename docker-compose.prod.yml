@@ -1,12 +1,34 @@
-
+version: '3.8'
 
 services:
   node-api:
-    build: .
     container_name: node-api-prod
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "3005:8080"
     environment:
       - NODE_ENV=production
-      - NEW_RELIC_LICENSE_KEY=${03dac8586fab61361232df1b233e77d1FFFFNRAL}
+      - NEW_RELIC_LICENSE_KEY=$18bd6ed5-f760-4e8e-94bc-68e5c0f87786$
+    depends_on:
+      - mongo
+    networks:
+      - app-net
 
+  mongo:
+    image: mongo:6
+    container_name: mongo-prod
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
+
+volumes:
+  mongo-data:

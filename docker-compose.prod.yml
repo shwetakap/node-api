@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3005:8080"
+      - "3005:5000"
     environment:
       - NODE_ENV=production
       - NEW_RELIC_LICENSE_KEY=$18bd6ed5-f760-4e8e-94bc-68e5c0f87786$

@@ -3,7 +3,7 @@
   "main": "server.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/scotch-io/node-token-authentication.git"
+    "url": "git://github.com/shwetakap/node-api.git"
   },
   "scripts": {
     "start": "node server.js",
@@ -11,7 +11,7 @@
     "test:unit": "npx mocha \"test/unit/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=test-results/unit-test-results.xml --timeout 10000",
     "test:integration": "npx mocha \"test/integration/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=test-results/integration-test-results.xml --timeout 10000"
   },
-  "author": "Chris Sevilleja <scotch.io>",
+  "author": "SK <scotch.io>",
   "license": "MIT",
   "dependencies": {
     "body-parser": "~1.18.2",
@@ -34,7 +34,7 @@
   },
   "keywords": [],
   "bugs": {
-    "url": "https://github.com/scotch-io/node-token-authentication/issues"
+    "url": "https://github.com/shwetakap/node-api.git"
   },
-  "homepage": "https://github.com/scotch-io/node-token-authentication#readme"
+  "homepage": "https://github.com/shwetakap/node-api/blob/main/README.md"
 }

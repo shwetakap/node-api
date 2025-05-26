@@ -6,7 +6,8 @@ pipeline {
         SONAR_PROJECT_KEY = 'shwetakap_node-api'
         SONAR_HOST_URL = 'https://sonarcloud.io'
         SONAR_ORGANIZATION = 'shwetakap'
-        NODE_ENV = 'production'
+        NODE_ENV = 'test'
+        MONGO_URL = 'mongodb://host.docker.internal:27017/test-db'
     }
 
     stages {
@@ -16,31 +17,27 @@ pipeline {
             }
         }
 
-        stage('Build using Docker') {
+        stage('Build Docker Image') {
             steps {
-                script {
-                    bat "docker build -t ${IMAGE_NAME} ."
-                }
+                bat 'docker build --no-cache -t %IMAGE_NAME% .'
             }
         }
 
-        stage('Run Unit Tests (Mocha + Chai)') {
+        stage('Install Dependencies') {
             steps {
-                script {
-                    echo '🔍 Running Unit Tests'
-                    bat "docker run --rm ${IMAGE_NAME} npx mocha \"test/unit/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=test-results/unit-test-results.xml"
-                }
-                junit 'test-results/unit-test-results.xml'
+                bat 'npm install'
             }
         }
 
-        stage('Run Integration Tests') {
+        stage('Run Unit Tests Locally') {
             steps {
-                script {
-                    echo '🔗 Running Integration Tests'
-                    bat "docker run --rm ${IMAGE_NAME} npx mocha \"test/integration/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=test-results/integration-test-results.xml"
-                }
-                junit 'test-results/integration-test-results.xml'
+                bat 'set MONGO_URL=%MONGO_URL%&& set NODE_ENV=%NODE_ENV%&& npx mocha "test/unit/**/*.test.js" --timeout 10000'
+            }
+        }
+
+        stage('Run Integration Tests Locally') {
+            steps {
+                bat 'set MONGO_URL=%MONGO_URL%&& set NODE_ENV=%NODE_ENV%&& npx mocha "test/integration/**/*.test.js" --timeout 10000'
             }
         }
 
